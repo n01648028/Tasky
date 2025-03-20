@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Page</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+<div class="main">
+    <header th:include="@{/fragments/header.html}"></header>
+    <div class="content">
+        <div th:if="${message}" th:text="${message}" class="alert alert-success"></div>
+        <form th:action="@{/Tasky/menu/1}" method="get">
+            <input type="text" name="searchedCategory" placeholder="Category" />
+            <input type="number" name="searchedPrice" placeholder="Price" />
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a class="btn btn-primary" th:href="@{/Tasky/menu/1}">Reset</a>
+        </form><br>
+        <table class="table">
+            <thead class="thread-dark">
+            <tr>
+<!--               /Tasky/menu/1?sortField=id&sortDirection=desc -->
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=id&sortDirection=' + ${reverseSortDirection} }" >ID</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=name&sortDirection=' + ${reverseSortDirection}}" >Name</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=category&sortDirection=' + ${reverseSortDirection}}" >Category</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=price&sortDirection=' + ${reverseSortDirection}}" >Price</a>
+                </th>
+                <th scope="col">ACTIONS</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dish:${dishes}">
+                <th scope="row" th:text="${dish.id}"></th>
+                <td th:text="${dish.name}">Mark</td>
+                <td th:text="${dish.category}">Otto</td>
+                <td th:text="${dish.price}">@mdo</td>
+                <td>
+                    <a th:href="@{/Tasky/admin/delete/{id}(id=${dish.id})}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/Tasky/admin/update/{id}(id=${dish.id})}" class="btn btn-danger btn-sm">Update</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+<!-- pagination-->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <div class="pagination-info">
+            <div>Total dishes: <span th:text="${totalItems}"></span></div>
+            <div>Current page: <span th:text="${currentPage}"></span></div>
+            <div>Total page: <span th:text="${totalPages}"></span></div>
+        </div>
+        <div class="pagination-no">
+            <div th:each="i : ${#numbers.sequence(1, totalPages)}">
+<!--                /Tasky/menu/ + i-->
+<!--                /Tasky/menu/i?sortField=id&sortDirection=sortDirection-->
+                <a th:text="${i}" th:href="@{'/Tasky/menu/' + ${i} + '?sortField=' + ${sortField} + '&sortDirection=' + ${sortDirection} }"></a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
