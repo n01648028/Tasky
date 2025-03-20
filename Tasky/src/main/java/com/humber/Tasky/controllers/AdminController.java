@@ -54,10 +54,10 @@ public class AdminController {
     public String deleteDish(@PathVariable int id) {
         int deleteStatusCode = dishService.deleteDishById(id);
         if (deleteStatusCode == 1) {
-            return "redirect:/restaurant/menu/1?message=Dish deleted successfully.";
+            return "redirect:/Tasky/menu/1?message=Dish deleted successfully.";
         }
         //does delete fail (dish does not exist)
-        return "redirect:/restaurant/menu/1?message=Dish does not exist!";
+        return "redirect:/Tasky/menu/1?message=Dish does not exist!";
     }
     //endpoint to open the update dish from
     @GetMapping("/update/{id}")
@@ -69,13 +69,13 @@ public class AdminController {
             model.addAttribute("dish", optionalDishToUpdate.get());
             return "admin/add-dish";
         }
-        return "redirect:/restaurant/menu/1?message=Dish to be updated does not exist!";
+        return "redirect:/Tasky/menu/1?message=Dish to be updated does not exist!";
     }
     //endpoint to update the dish
     @PostMapping("/update")
     public String updateDish(@ModelAttribute Dish dish, Model model) {
         //call the update method in the service layer
         dishService.updateDish(dish);
-        return "redirect:/restaurant/menu/1?message=Dish updated successfully!";
+        return "redirect:/Tasky/menu/1?message=Dish updated successfully!";
     }
 }
