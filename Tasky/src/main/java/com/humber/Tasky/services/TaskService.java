@@ -24,6 +24,7 @@ public class TaskService {
         //business logic should have been included here
         return taskRepository.findAll();
     }
+    //get task by id
     public Optional<Task> getTaskById(int id){
         return taskRepository.findById(id);
     }
@@ -54,10 +55,7 @@ public class TaskService {
     public void updateTask(Task task){
         taskRepository.save(task);
     }
-    //get a dish by id
-    public Optional<Task> getDishById(int id){
-        return taskRepository.findById(id);
-    }
+
     //get dish records by category and price
     public List<Task> getTaskByTitleAndAssigneeAndStatus(String title, String assignee, String status){
         return taskRepository.findByTitleAndAssigneeAndStatus(title, assignee, status);
