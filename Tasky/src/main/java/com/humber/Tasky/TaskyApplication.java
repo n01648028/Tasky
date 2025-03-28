@@ -1,32 +1,29 @@
 package com.humber.Tasky;
 
-import com.humber.Tasky.controllers.AuthController;
-import com.humber.Tasky.models.Dish;
+import com.humber.Tasky.models.Task;
 import com.humber.Tasky.models.MyUser;
-import com.humber.Tasky.services.DishService;
-import com.humber.Tasky.services.MyUserDetailsService;
+import com.humber.Tasky.services.TaskService;
 import com.humber.Tasky.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
+import java.util.Date;
 
 @SpringBootApplication
 public class TaskyApplication implements CommandLineRunner {
 
 // constructor injection - Dish Service
-	private final DishService dishService;
+	private final TaskService taskService;
 	private final UserService userService;
 	private AuthenticationManager authenticationManager;
 
-	public TaskyApplication(DishService dishService, UserService userService, AuthenticationManager authenticationManager) {
-		this.dishService = dishService;
+	public TaskyApplication(TaskService taskService, UserService userService, AuthenticationManager authenticationManager) {
+		this.taskService = taskService;
         this.userService = userService;
 		this.authenticationManager = authenticationManager;
     }
@@ -42,6 +39,6 @@ public class TaskyApplication implements CommandLineRunner {
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(admin.getUsername(), "password");
 		Authentication authentication = authenticationManager.authenticate(token);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		dishService.saveDish(new Dish("Pizza", "Italian", 10.0));
+		taskService.saveTask(new Task("Dish", "Bolos", "Clean Dishes", "Tasky", "2025-03-30", "To Do"));
 	}
 }

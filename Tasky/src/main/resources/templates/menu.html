@@ -12,8 +12,10 @@
     <div class="content">
         <div th:if="${message}" th:text="${message}" class="alert alert-success"></div>
         <form th:action="@{/Tasky/menu/1}" method="get">
-            <input type="text" name="searchedCategory" placeholder="Category" />
-            <input type="number" name="searchedPrice" placeholder="Price" />
+            <br>
+            <input type="text" name="searchedTitle" placeholder="Title" />
+            <input type="text" name="searchedAssignee" placeholder="Assignee" />
+            <input type="text" name="searchedStatus" placeholder="Status" />
             <button type="submit" class="btn btn-primary">Filter</button>
             <a class="btn btn-primary" th:href="@{/Tasky/menu/1}">Reset</a>
         </form><br>
@@ -25,26 +27,38 @@
                     <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=id&sortDirection=' + ${reverseSortDirection} }" >ID</a>
                 </th>
                 <th scope="col">
-                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=name&sortDirection=' + ${reverseSortDirection}}" >Name</a>
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=title&sortDirection=' + ${reverseSortDirection}}">Title</a>
                 </th>
                 <th scope="col">
-                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=category&sortDirection=' + ${reverseSortDirection}}" >Category</a>
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=assignee&sortDirection=' + ${reverseSortDirection}}">Assignee</a>
                 </th>
                 <th scope="col">
-                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=price&sortDirection=' + ${reverseSortDirection}}" >Price</a>
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=priority&sortDirection=' + ${reverseSortDirection}}">Priority</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=project&sortDirection=' + ${reverseSortDirection}}">Project</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=deadline&sortDirection=' + ${reverseSortDirection}}">Deadline</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=status&sortDirection=' + ${reverseSortDirection}}">Status</a>
                 </th>
                 <th scope="col">ACTIONS</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="dish:${dishes}">
-                <th scope="row" th:text="${dish.id}"></th>
-                <td th:text="${dish.name}">Mark</td>
-                <td th:text="${dish.category}">Otto</td>
-                <td th:text="${dish.price}">@mdo</td>
+            <tr th:each="task:${tasks}">
+                <th scope="row" th:text="${task.id}"></th>
+                <td th:text="${task.title}">Dish</td>
+                <td th:text="${task.assignee}">Bolos</td>
+                <td th:text="${task.priority}">Dishes</td>
+                <td th:text="${task.project}">Tasky</td>
+                <td th:text="${task.deadline}">02/12/2025</td>
+                <td th:text="${task.status}">To Do</td>
                 <td>
-                    <a th:href="@{/Tasky/admin/delete/{id}(id=${dish.id})}" class="btn btn-danger">Delete</a>
-                    <a th:href="@{/Tasky/admin/update/{id}(id=${dish.id})}" class="btn btn-danger btn-sm">Update</a>
+                    <a th:href="@{/Tasky/admin/delete/{id}(id=${task.id})}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/Tasky/admin/update/{id}(id=${task.id})}" class="btn btn-danger btn-sm">Update</a>
                 </td>
             </tr>
             </tbody>

@@ -1,7 +1,7 @@
 package com.humber.Tasky.controllers;
 
-import com.humber.Tasky.models.Dish;
-import com.humber.Tasky.services.DishService;
+import com.humber.Tasky.models.Task;
+import com.humber.Tasky.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -10,13 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/Tasky")
-public class DishController {
+public class TaskController {
     //dependency injection
     @Autowired
-    private DishService dishService;
+    private TaskService taskService;
     @Value("${restaurant.name}")
     private String restaurantName;
     @Value("${page.size}")
@@ -31,22 +32,24 @@ public class DishController {
     @GetMapping("/menu/{pageNo}")
     public String menu(Model model,
                        @RequestParam(required = false) String message,
-                       @RequestParam(required = false) String searchedCategory,
-                       @RequestParam(required = false) Double searchedPrice,
+                       @RequestParam(required = false) Optional<String> searchedTitle,
+                       @RequestParam(required = false) Optional<String> searchedAssignee,
+                       @RequestParam(required = false) Optional<String> searchedStatus,
                        @PathVariable int pageNo,
                        @RequestParam(defaultValue = "id") String sortField,
                        @RequestParam(defaultValue = "asc") String sortDirection
                        ) {
         //filter condition
-        if(searchedCategory != null && searchedPrice != null) {
-            List<Dish> filteredDishes = dishService.getDishByCategoryAndPrice(searchedCategory, searchedPrice);
-            model.addAttribute("dishes", filteredDishes);
-            model.addAttribute("message", filteredDishes.isEmpty() ? "Filter failed!" : "Filter successful!");
+        if(searchedTitle.isPresent() && searchedAssignee.isPresent() & searchedStatus.isPresent() ) {
+//            List<Task> filteredTasks = taskService.getTaskByTitleAndAssigneeAndStatus(searchedTitle, searchedAssignee, searchedStatus);
+            List<Task> filteredTasks = taskService.getTaskByTitleOrAssigneeOrStatus(searchedTitle, searchedAssignee, searchedStatus);
+            model.addAttribute("tasks", filteredTasks);
+            model.addAttribute("message", filteredTasks.isEmpty() ? "Filter failed!" : "Filter successful!");
             return "menu";
         }
         //general condition = return paginated records
-        Page<Dish> page = dishService.getPaginatedDishes(pageNo, pageSize, sortField, sortDirection);
-        model.addAttribute("dishes", page.getContent());
+        Page<Task> page = taskService.getPaginatedTasks(pageNo, pageSize, sortField, sortDirection);
+        model.addAttribute("tasks", page.getContent());
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalItems", page.getTotalElements());
