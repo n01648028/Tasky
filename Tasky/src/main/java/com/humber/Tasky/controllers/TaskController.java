@@ -18,7 +18,7 @@ public class TaskController {
     //dependency injection
     @Autowired
     private TaskService taskService;
-    @Value("${restaurant.name}")
+    @Value("${tasky.name}")
     private String restaurantName;
     @Value("${page.size}")
     private int pageSize;
@@ -28,7 +28,7 @@ public class TaskController {
         model.addAttribute("rName", restaurantName);
         return "home";
     }
-    //endpoint for menu page (list of dishes)
+    //endpoint for menu page (list of tasks)
     @GetMapping("/menu/{pageNo}")
     public String menu(Model model,
                        @RequestParam(required = false) String message,
@@ -56,7 +56,7 @@ public class TaskController {
         //sorting info
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
-        //add information to display in menu like the dishes and the message if there is one
+        //add information to display in menu like the tasks and the message if there is one
         model.addAttribute("reverseSortDirection", sortDirection.equals("asc") ? "desc" : "asc");
         model.addAttribute("message", message);
         return "menu";

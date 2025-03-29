@@ -19,7 +19,7 @@ public class TaskService {
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
-    //get all dishes from the repo layer
+    //get all tasks from the repo layer
     public List<Task> getAllTasks(){
         //business logic should have been included here
         return taskRepository.findAll();
@@ -28,7 +28,7 @@ public class TaskService {
     public Optional<Task> getTaskById(int id){
         return taskRepository.findById(id);
     }
-    //save a dish to the db(calling the save method on the repo)
+    //save a task to the db(calling the save method on the repo)
     //0=failure, 1=success
     public int saveTask(Task task){
 //        //validation
@@ -39,7 +39,7 @@ public class TaskService {
         taskRepository.save(task);
         return 1;
     }
-    //delete a dish from the db
+    //delete a task from the db
     //0=failure, 1=success
     public int deleteTaskById(int id){
         //check if task exists
@@ -51,15 +51,16 @@ public class TaskService {
         //task does not exist
         return 0;
     }
-    //update a dish from the db
+    //update a task from the db
     public void updateTask(Task task){
         taskRepository.save(task);
     }
 
-    //get dish records by category and price
+    //get task records by title, assignee, and status
     public List<Task> getTaskByTitleAndAssigneeAndStatus(String title, String assignee, String status){
         return taskRepository.findByTitleAndAssigneeAndStatus(title, assignee, status);
     }
+    //get task records by title, assignee, or status
     public List<Task> getTaskByTitleOrAssigneeOrStatus(Optional<String> title, Optional<String> assignee, Optional<String> status){
         return taskRepository.findByTitleOrAssigneeOrStatus(title, assignee, status);
     }

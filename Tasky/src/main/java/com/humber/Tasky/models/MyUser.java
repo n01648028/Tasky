@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 public class MyUser {
     @Id
-    //All the attributes in the dish
+    //All the attributes in MyUser
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(nullable = false, unique = true)

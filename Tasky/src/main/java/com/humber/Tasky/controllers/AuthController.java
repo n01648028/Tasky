@@ -24,7 +24,7 @@ public class AuthController implements ErrorController {
         this.userService = userService;
     }
 
-    @Value("${restaurant.name}")
+    @Value("${tasky.name}")
     private String name;
 
     //custom error endpoint

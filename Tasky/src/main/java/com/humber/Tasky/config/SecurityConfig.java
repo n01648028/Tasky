@@ -30,16 +30,19 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests( (authorize) -> authorize
                         //the list of all links
+                        //permits for any user under /Tasky/home
                         .requestMatchers("/Tasky/home").permitAll()
-                        //permits for any link under /restaurant/login/
+                        //permits for any link under /Tasky/login/
                         .requestMatchers("/Tasky/login/**").permitAll()
                         //permits for any link under /register/
                         .requestMatchers("/register/**").permitAll()
+                        //show an error page under /error
                         .requestMatchers("/error").permitAll()
+                        //permits for any link under /Tasky/logout/
                         .requestMatchers("/Tasky/logout").permitAll()
-                        //permits only if the user's role is USER or ADMIN for any link under /restaurant/menu/
+                        //permits only if the user's role is USER or ADMIN for any link under /Tasky/menu/
                         .requestMatchers("/Tasky/menu/**").hasAnyRole("USER", "ADMIN")
-                        //permits only if the user's role is ADMIN for any link under /restaurant/admin/
+                        //permits only if the user's role is ADMIN for any link under /Tasky/admin/
                         .requestMatchers("/Tasky/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 ).formLogin(httpSecurityFormLoginConfigurer -> {

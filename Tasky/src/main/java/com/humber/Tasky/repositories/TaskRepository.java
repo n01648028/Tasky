@@ -9,7 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
-    //custom method to find dish records by category and price
+    //custom method to find task records by tile, assignee, and status
     public List<Task> findByTitleAndAssigneeAndStatus(String title, String assignee, String status);
+    //custom method to find task records by tile, assignee, or status
     public List<Task> findByTitleOrAssigneeOrStatus(Optional<String> title, Optional<String> assignee, Optional<String> status);
 }

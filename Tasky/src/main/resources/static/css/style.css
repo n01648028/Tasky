@@ -68,7 +68,6 @@ footer .card-header {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    position: fixed;
     bottom: 40px;
     width: 100%;
     background-color: blue;

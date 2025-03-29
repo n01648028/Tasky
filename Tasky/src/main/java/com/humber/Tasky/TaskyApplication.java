@@ -12,12 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Date;
 
 @SpringBootApplication
 public class TaskyApplication implements CommandLineRunner {
 
-// constructor injection - Dish Service
+// constructor injection - TaskService
 	private final TaskService taskService;
 	private final UserService userService;
 	private AuthenticationManager authenticationManager;
@@ -40,5 +39,7 @@ public class TaskyApplication implements CommandLineRunner {
 		Authentication authentication = authenticationManager.authenticate(token);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		taskService.saveTask(new Task("Dish", "Bolos", "Clean Dishes", "Tasky", "2025-03-30", "To Do"));
+		taskService.saveTask(new Task("Dish", "Danyyil", "Clean Dishes", "Tasky", "2025-03-30", "To Do"));
+		taskService.saveTask(new Task("Dish", "Ilker", "Clean Dishes", "Tasky", "2025-03-30", "To Do"));
 	}
 }
