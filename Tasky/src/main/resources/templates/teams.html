@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="main">
+        <header th:include="@{/fragments/header.html}"></header>
+        <div class="content">
+            <tr>
+                <!--               /Tasky/menu/1?sortField=id&sortDirection=desc -->
+                <th scope="col">
+                    <a th:href="@{'/Tasky/teams/' + ${currentPageTeams} + '?sortField=id&sortDirection=' + ${reverseSortDirection} }" >ID</a>
+                </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/teams/' + ${currentPageTeams} + '?sortField=teams&sortDirection=' + ${reverseSortDirection} }" >Teams</a>
+                </th>
+            <tr th:each="task:${teams}">
+                <th scope="row" th:text="${task.id}"></th>
+                <th scope="row" th:text="${task.titles}"></th>
+                <th scope="col">ACTIONS</th>
+                <td>
+                    <a th:href="@{/Tasky/delete/{id}(id=${teams.id})}" class="btn btn-danger">Join Team</a>
+                    <a th:href="@{/Tasky/admin/update/{id}(id=${teams.id})}" class="btn btn-danger btn-sm">Create Team</a>
+                    <a th:href="@{/Tasky/admin/update/{id}(id=${teams.id})}" class="btn btn-danger btn-sm"> Delete Team</a>
+                </td>
+            </tr>
+        </div>
+
+    </div>
+
+</body>
+</html>

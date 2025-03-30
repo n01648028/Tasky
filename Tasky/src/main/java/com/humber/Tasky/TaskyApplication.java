@@ -38,8 +38,8 @@ public class TaskyApplication implements CommandLineRunner {
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(admin.getUsername(), "password");
 		Authentication authentication = authenticationManager.authenticate(token);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		taskService.saveTask(new Task("Dish Task", "Bolos", "Clean Dishes", "Tasky", "2025-03-30", "To Do"));
-		taskService.saveTask(new Task("Dish Task", "Danyyil", "Add Dishes", "Tasky", "2025-03-30", "To Do"));
-		taskService.saveTask(new Task("Dish Task", "Ilker", "Deliver Dishes", "Tasky", "2025-03-30", "To Do"));
+		taskService.saveTask(new Task("Dish Task","Bolos", "Clean Dishes", "Tasky", "2025-03-30", "To Do", "Hello World"));
+		taskService.saveTask(new Task("Dish Task","Ilker", "Add Dishes", "Tasky", "2025-03-30", "In Progress", "Hello World 2"));
+		taskService.saveTask(new Task("Dish Task","Danyyil", "Deliver Dishes", "Tasky", "2025-03-30", "Done", "Hello World 3"));
 	}
 }

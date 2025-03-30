@@ -44,6 +44,9 @@
                 <th scope="col">
                     <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=status&sortDirection=' + ${reverseSortDirection}}">Status</a>
                 </th>
+                <th scope="col">
+                    <a th:href="@{'/Tasky/menu/' + ${currentPage} + '?sortField=details&sortDirection=' + ${reverseSortDirection}}">Details</a>
+                </th>
                 <th scope="col">ACTIONS</th>
             </tr>
             </thead>
@@ -56,6 +59,7 @@
                 <td th:text="${task.project}">Tasky</td>
                 <td th:text="${task.deadline}">02/12/2025</td>
                 <td th:text="${task.status}">To Do</td>
+                <td th:text="${task.details}">Details</td>
                 <td>
                     <a th:href="@{/Tasky/admin/delete/{id}(id=${task.id})}" class="btn btn-danger">Delete</a>
                     <a th:href="@{/Tasky/admin/update/{id}(id=${task.id})}" class="btn btn-danger btn-sm">Update</a>

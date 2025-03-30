@@ -78,4 +78,5 @@ public class AdminController {
         taskService.updateTask(task);
         return "redirect:/Tasky/menu/1?message=Task updated successfully!";
     }
+
 }

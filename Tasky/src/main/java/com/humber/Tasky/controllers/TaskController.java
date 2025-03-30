@@ -19,13 +19,13 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
     @Value("${tasky.name}")
-    private String restaurantName;
+    private String taskName;
     @Value("${page.size}")
     private int pageSize;
     //endpoint for home page
     @GetMapping("/home")
     public String home(Model model) {
-        model.addAttribute("rName", restaurantName);
+        model.addAttribute("rName", taskName);
         return "home";
     }
     //endpoint for menu page (list of tasks)
@@ -41,7 +41,7 @@ public class TaskController {
                        ) {
         //filter condition
         if(searchedTitle.isPresent() && searchedAssignee.isPresent() & searchedStatus.isPresent() ) {
-//            List<Task> filteredTasks = taskService.getTaskByTitleAndAssigneeAndStatus(searchedTitle, searchedAssignee, searchedStatus);
+//           List<Task> filteredTasks = taskService.getTaskByTitleAndAssigneeAndStatus(searchedTitle, searchedAssignee, searchedStatus);
             List<Task> filteredTasks = taskService.getTaskByTitleOrAssigneeOrStatus(searchedTitle, searchedAssignee, searchedStatus);
             model.addAttribute("tasks", filteredTasks);
             model.addAttribute("message", filteredTasks.isEmpty() ? "Filter failed!" : "Filter successful!");
@@ -62,3 +62,5 @@ public class TaskController {
         return "menu";
     }
 }
+
+

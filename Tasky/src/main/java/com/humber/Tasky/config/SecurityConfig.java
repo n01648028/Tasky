@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/Tasky/menu/**").hasAnyRole("USER", "ADMIN")
                         //permits only if the user's role is ADMIN for any link under /Tasky/admin/
                         .requestMatchers("/Tasky/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/Tasky/teams/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 ).formLogin(httpSecurityFormLoginConfigurer -> {
                     //declares /login as login page and permits all users

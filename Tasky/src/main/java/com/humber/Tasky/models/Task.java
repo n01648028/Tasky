@@ -1,15 +1,10 @@
 package com.humber.Tasky.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 //Model Class
 @Data
@@ -28,15 +23,18 @@ public class Task {
     private String project;
     private String deadline;
     private String status;
+    @Column(length = 2147483647)
+    private String details;
 
     //constructor without id parameter
-    public Task(String title, String assignee, String priority, String project, String deadline, String status) {
+    public Task(String title, String assignee, String priority, String project, String deadline, String status, String details) {
         this.title = title;
         this.assignee = assignee;
         this.priority = priority;
         this.project = project;
         this.deadline = deadline;
         this.status = status;
+        this.details = details;
     }
 
     @Override
@@ -50,6 +48,7 @@ public class Task {
                 ", project='" + project + '\'' +
                 ", deadline=" + deadline +
                 ", status='" + status + '\'' +
+                ", details='" + details + '\'' +
                 '}';
     }
 }
