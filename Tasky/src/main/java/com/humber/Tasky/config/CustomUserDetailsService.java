@@ -1,4 +1,4 @@
-package com.humber.Tasky.security;
+package com.humber.Tasky.config;
 
 import com.humber.Tasky.models.User;
 import com.humber.Tasky.repositories.UserRepository;

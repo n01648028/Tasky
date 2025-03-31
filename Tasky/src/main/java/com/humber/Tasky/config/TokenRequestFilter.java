@@ -1,4 +1,4 @@
-package com.humber.Tasky.security;
+package com.humber.Tasky.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

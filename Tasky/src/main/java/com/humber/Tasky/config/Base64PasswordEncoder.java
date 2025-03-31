@@ -1,7 +1,6 @@
-package com.humber.Tasky.security;
+package com.humber.Tasky.config;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.Base64;
 
 public class Base64PasswordEncoder implements PasswordEncoder {

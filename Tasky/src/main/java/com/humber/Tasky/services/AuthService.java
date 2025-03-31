@@ -2,7 +2,7 @@ package com.humber.Tasky.services;
 
 import com.humber.Tasky.models.User;
 import com.humber.Tasky.repositories.UserRepository;
-import com.humber.Tasky.security.Base64TokenUtil;
+import com.humber.Tasky.config.Base64TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
