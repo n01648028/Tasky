@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout(~{::section})">
+<head>
+    <title>Tasky - Profile</title>
+</head>
+<body>
+<section>
+    <h1>Your Profile</h1>
+
+    <form th:action="@{/profile}" method="post" th:object="${user}">
+        <div class="mb-3">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullName" th:field="*{fullName}">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" th:field="*{email}" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="avatarUrl" class="form-label">Avatar URL</label>
+            <input type="text" class="form-control" id="avatarUrl" th:field="*{avatarUrl}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+
+    <div class="mt-4">
+        <h3>Invitations</h3>
+        <div th:if="${user.invitations != null and !user.invitations.empty}">
+            <div th:each="invitation : ${user.invitations}">
+                <p th:text="${invitation}"></p>
+                <a th:href="@{/api/users/invitations/{inviterId}/accept(inviterId=${invitation})}" class="btn btn-sm btn-success">Accept</a>
+                <a th:href="@{/api/users/invitations/{inviterId}/reject(inviterId=${invitation})}" class="btn btn-sm btn-danger">Reject</a>
+            </div>
+        </div>
+        <div th:unless="${user.invitations != null and !user.invitations.empty}">
+            <p>No pending invitations</p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,54 +1,106 @@
 package com.humber.Tasky.models;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-//Model Class
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
+import java.time.LocalDateTime;
+
+@Document(collection = "tasks")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //All the attributes in the task
-    private int id;
-    private String title;
-    private String assignee;
-    private String priority;
-    private String project;
-    private String deadline;
-    private String status;
-    @Column(length = 2147483647)
-    private String details;
+    private String id;
 
-    //constructor without id parameter
-    public Task(String title, String assignee, String priority, String project, String deadline, String status, String details) {
-        this.title = title;
-        this.assignee = assignee;
-        this.priority = priority;
-        this.project = project;
-        this.deadline = deadline;
-        this.status = status;
-        this.details = details;
+    private String title;
+    private String description;
+    private LocalDateTime dueDate;
+    private boolean completed;
+    private Priority priority;
+
+    @DBRef
+    private User owner;
+
+    @DBRef
+    private User createdBy;
+
+    // Enum for Priority levels
+    public enum Priority {
+        LOW, MEDIUM, HIGH
     }
 
-    @Override
-    public String toString() {
-        //Returns the presentation of the task
-        return "Task(" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", assignee='" + assignee + '\'' +
-                ", priority='" + priority + '\'' +
-                ", project='" + project + '\'' +
-                ", deadline=" + deadline +
-                ", status='" + status + '\'' +
-                ", details='" + details + '\'' +
-                '}';
+    // Default constructor
+    public Task() {
+    }
+
+    // Getter and Setter for 'id'
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    // Getter and Setter for 'title'
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    // Getter and Setter for 'description'
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    // Getter and Setter for 'dueDate'
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    // Getter and Setter for 'completed'
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    // Getter and Setter for 'priority'
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    // Getter and Setter for 'owner'
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    // Getter and Setter for 'createdBy'
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 }

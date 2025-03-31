@@ -1,68 +1,35 @@
 package com.humber.Tasky.controllers;
 
-import com.humber.Tasky.models.MyUser;
-import com.humber.Tasky.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.humber.Tasky.models.User;
+import com.humber.Tasky.services.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-public class AuthController implements ErrorController {
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
 
-    private final UserService userService;
+    @Autowired
+    private AuthService authService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Value("${tasky.name}")
-    private String name;
-
-    //custom error endpoint
-    @GetMapping("/error")
-    public String handleError() {
-        return "auth/error";
-    }
-    //custom login endpoint
-    @GetMapping("/login")
-    public String login(Model model, @RequestParam(required = false) String message) {
-        //add information to display in login like the message and name
-        model.addAttribute("message", message);
-        model.addAttribute("restaurantName", name);
-        return "auth/login";
-    }
-    
-    //custom logout endpoint
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest req, HttpServletResponse res, Authentication authentication) {
-        //perform the logout logic
-        new SecurityContextLogoutHandler().logout(req, res, authentication);
-        return "redirect:/login?message=You have been logged out sucessfully";
-    }
-    //custom registration - open the registration form
-    @GetMapping("/register")
-    public String register(Model model, @RequestParam(required = false) String message) {
-        model.addAttribute("message", message);
-        model.addAttribute("user", new MyUser());
-        return "auth/register";
-    }
-    //custom registration - save the user
     @PostMapping("/register")
-    public String register(@ModelAttribute MyUser user) {
-        //save the user
-        int statusCode = userService.saveUser(user);
-        if (statusCode == 0) {
-            return "redirect:/register?message=Username already exists";
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        try {
+            String result = authService.registerUser(user);
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return "redirect:/login?message=Registration successful! Please login to continue";
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestParam String email, @RequestParam String password) {
+        try {
+            String token = authService.loginUser(email, password);
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid credentials");
+        }
     }
 }

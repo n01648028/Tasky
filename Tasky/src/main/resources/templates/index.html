@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<head>
+    <title>Tasky - Home</title>
+</head>
+<body>
+<section>
+    <h1>Welcome to Tasky</h1>
+
+    <div th:if="${tasks != null and !tasks.empty}">
+        <h2>Your Tasks</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Due Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task : ${tasks}">
+                <td th:text="${task.title}"></td>
+                <td th:text="${#temporals.format(task.dueDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${task.priority}"></td>
+                <td>
+                    <span th:if="${task.completed}" class="badge bg-success">Completed</span>
+                    <span th:unless="${task.completed}" class="badge bg-warning">Pending</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${tasks != null and !tasks.empty}">
+        <p>No tasks found. Create your first task!</p>
+    </div>
+
+    <a href="/tasks/new" class="btn btn-primary">Create New Task</a>
+</section>
+</body>
+</html>
