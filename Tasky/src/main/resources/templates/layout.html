@@ -3,27 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasky</title>
+    <title th:text="${#strings.isEmpty(title) ? 'Tasky' : title + ' - Tasky'}">Tasky</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #f43f5e;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+        
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #e2e8f0;
+            --bs-secondary-bg: #1e293b;
+            --bs-tertiary-bg: #334155;
+        }
+        
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            background-color: var(--dark-color) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .container {
+            flex: 1;
+        }
+        
+        .card {
+            background-color: var(--bs-secondary-bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+        
+        .task-priority-high {
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .task-priority-medium {
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .task-priority-low {
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">Tasky</a>
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <i class="mdi mdi-checkbox-marked-circle-outline me-2"></i>
+            Tasky
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav me-auto" sec:authorize="isAuthenticated()">
-                <a class="nav-link" href="/tasks/new">New Task</a>
-                <a class="nav-link" href="/calendar">Calendar</a>
-                <a class="nav-link" href="/profile">Profile</a>
-                <a class="nav-link" href="/logout">Logout</a>
+                <a class="nav-link" href="/tasks/new">
+                    <i class="mdi mdi-plus-circle-outline me-1"></i> New Task
+                </a>
+                <a class="nav-link" href="/calendar">
+                    <i class="mdi mdi-calendar-month-outline me-1"></i> Calendar
+                </a>
+                <a class="nav-link" href="/profile">
+                    <i class="mdi mdi-account-circle-outline me-1"></i> Profile
+                </a>
             </div>
-            <div class="navbar-nav" sec:authorize="!isAuthenticated()">
-                <a class="nav-link" href="/login">Login</a>
-                <a class="nav-link" href="/register">Register</a>
+            <div class="navbar-nav">
+                <div sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="nav-link border-0 bg-transparent p-0">
+                            <i class="mdi mdi-logout me-1"></i> Logout
+                        </button>
+                    </form>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                    <a class="nav-link" href="/login">
+                        <i class="mdi mdi-login me-1"></i> Login
+                    </a>
+                    <a class="nav-link" href="/register">
+                        <i class="mdi mdi-account-plus-outline me-1"></i> Register
+                    </a>
+                </div>
+                <button class="btn theme-toggle ms-2" onclick="toggleTheme()">
+                    <i class="mdi mdi-theme-light-dark"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -33,6 +159,28 @@
     <div th:replace="${content}"></div>
 </div>
 
+<footer class="mt-5 py-3 text-center text-muted">
+    <div class="container">
+        <p>© 2025 Tasky. All rights reserved.</p>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Theme toggle functionality
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-bs-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+    
+    // Apply saved theme on load
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    });
+</script>
 </body>
 </html>
