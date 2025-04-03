@@ -23,12 +23,14 @@ public class TaskController {
 
     @GetMapping
     public List<Task> getAllTasks(@AuthenticationPrincipal User user) {
+        //print tasks for debugging
+        System.out.println(" - Tasks: " + taskService.getAllTasks(user));
         return taskService.getAllTasks(user);
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task, @AuthenticationPrincipal User user) {
-        return taskService.createTask(task, user);
+    public Task createTask(@RequestBody Task task) {
+        return taskService.createTask(task);
     }
 
     @PutMapping("/{id}")

@@ -33,7 +33,7 @@ public class AuthController {
             String token = authService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
             return ResponseEntity.ok(Map.of("token", token));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Invalid credentials");
+            return ResponseEntity.status(401).body("Invalid email or password");
         }
     }
 

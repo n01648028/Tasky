@@ -5,12 +5,16 @@ import com.humber.Tasky.model.User;
 import com.humber.Tasky.repository.TaskRepository;
 import com.humber.Tasky.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class TaskService {
 
     @Autowired
@@ -23,12 +27,24 @@ public class TaskService {
         return taskRepository.findByOwner(owner);
     }
 
-    public Task createTask(Task task, User createdBy) {
+    public Task createTask(Task task) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("User must be authenticated to create a task");
+        }
+        
+        String email = authentication.getName();
+        User createdBy = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
         task.setCreatedBy(createdBy);
         task.setOwner(createdBy);
         Task savedTask = taskRepository.save(task);
+        
         createdBy.addTask(savedTask);
         userRepository.save(createdBy);
+        
         return savedTask;
     }
 

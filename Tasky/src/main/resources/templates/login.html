@@ -19,7 +19,7 @@
                         <form th:action="@{/login}" method="post">
                             <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
                             <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                                <i class="mdi mdi-alert-circle-outline me-2"></i> Invalid username or password. Please try again.
+                                <i class="mdi mdi-alert-circle-outline me-2"></i> Invalid email or password. Please try again.
                             </div>
                             <div th:if="${param.logout}" class="alert alert-success" role="alert">
                                 <i class="mdi mdi-check-circle-outline me-2"></i> You have been successfully logged out.
@@ -57,17 +57,7 @@
                         </form>
                     </div>
                     
-                    <div sec:authorize="isAuthenticated()" class="text-center">
-                        <i class="mdi mdi-check-circle-outline display-4 text-success mb-3"></i>
-                        <h2>You're already logged in!</h2>
-                        <p class="text-muted">Please wait while we redirect you...</p>
-                        
-                        <script>
-                            setTimeout(function() {
-                                window.location.href = '/';
-                            }, 2000);
-                        </script>
-                    </div>
+                    
                 </div>
             </div>
         </div>

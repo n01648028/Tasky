@@ -1,7 +1,10 @@
 package com.humber.Tasky.controller;
 
+import com.humber.Tasky.model.Task;
 import com.humber.Tasky.model.User;
 import com.humber.Tasky.service.AuthService;
+import com.humber.Tasky.service.TaskService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -15,25 +18,27 @@ import java.util.List;
 public class WebController {
 
     private final AuthService authService;
+    private final TaskService taskService;
 
     @Autowired
-    public WebController(AuthService authService) {
+    public WebController(AuthService authService, TaskService taskService) {
+        this.taskService = taskService;
         this.authService = authService;
     }
 
     @GetMapping("/")
-    public String home(@AuthenticationPrincipal User user, Model model) {
-        if (user != null) {
-            return "redirect:/calendar";
-        }
-        model.addAttribute("features", List.of(
-            "Organize your tasks efficiently",
-            "Share tasks with team members",
-            "Calendar view for better planning",
-            "Priority-based task management"
-        ));
-        return "index";
+public String home(@AuthenticationPrincipal User user, Model model) {
+    if (user != null) {
+        model.addAttribute("tasks", taskService.getAllTasks(user));
     }
+    model.addAttribute("features", List.of(
+        "Organize your tasks efficiently",
+        "Share tasks with team members",
+        "Calendar view for better planning",
+        "Priority-based task management"
+    ));
+    return "index";
+}
 
     @GetMapping("/login")
     public String showLoginPage(@AuthenticationPrincipal User user, Model model, CsrfToken csrfToken) {
@@ -56,11 +61,7 @@ public class WebController {
     //     return "redirect:/calendar";
     // }
 
-    @PostMapping("/login")
-public String processLogin() {
-    // Let Spring Security handle the authentication
-    return "redirect:/calendar";
-}
+    
 
     @GetMapping("/register")
     public String showRegisterPage(@AuthenticationPrincipal User user, Model model, CsrfToken csrfToken) {
@@ -92,27 +93,22 @@ public String processLogin() {
 
     @GetMapping("/calendar")
     public String calendarView(@AuthenticationPrincipal User user, Model model) {
-        if (user == null) {
-            return "redirect:/login";
-        }
+        model.addAttribute("tasks", taskService.getAllTasks(user));
         model.addAttribute("user", user);
         return "calendar";
     }
 
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal User user, Model model) {
-        if (user == null) {
-            return "redirect:/login";
-        }
         model.addAttribute("user", user);
         return "profile";
     }
 
     @GetMapping("/tasks/new")
-public String showTaskForm(@AuthenticationPrincipal User user, Model model) {
-    if (user == null) {
-        return "redirect:/login";
+    public String showTaskForm(@AuthenticationPrincipal User user, Model model) {
+        
+        model.addAttribute("user", user);
+        model.addAttribute("task", new Task());
+        return "task-form";
     }
-    return "task-form";
-}
 }

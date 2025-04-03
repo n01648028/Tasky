@@ -59,12 +59,16 @@ public class AuthService {
 
         try {
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(email.trim(), password)
             );
+            if (!authentication.isAuthenticated()) {
+                throw new BadCredentialsException("Invalid email or password");
+            }
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return jwtUtil.generateToken((UserDetails) authentication.getPrincipal());
-        } catch (BadCredentialsException e) {
-            throw new RuntimeException("Invalid email or password");
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return jwtUtil.generateToken(userDetails);
+        } catch (Exception e) {
+            throw new BadCredentialsException("Invalid email or password");
         }
     }
 }
