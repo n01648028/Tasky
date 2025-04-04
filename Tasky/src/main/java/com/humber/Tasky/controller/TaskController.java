@@ -55,6 +55,11 @@ public class TaskController {
         return taskService.getCompletedTasks(user, completed);
     }
 
+    @PostMapping("/uncomplete/{taskId}")
+public Task uncompleteTask(@PathVariable String taskId) {
+    return taskService.uncompleteTask(taskId);
+}
+
     @PostMapping("/{taskId}/share")
     public Task shareTask(
             @PathVariable String taskId,

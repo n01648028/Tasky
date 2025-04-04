@@ -2,6 +2,7 @@ package com.humber.Tasky.service;
 
 import com.humber.Tasky.model.Task;
 import com.humber.Tasky.model.User;
+import com.humber.Tasky.model.Task.Priority;
 import com.humber.Tasky.repository.TaskRepository;
 import com.humber.Tasky.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,12 @@ public class TaskService {
     public Task uncompleteTask(String id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
-
+    
         task.setCompleted(false);
+        
         return taskRepository.save(task);
     }
-    
+
     public Task createTask(Task task) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
