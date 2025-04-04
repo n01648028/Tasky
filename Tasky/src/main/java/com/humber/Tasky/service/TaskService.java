@@ -23,10 +23,36 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
+    public Task getTaskById(String id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+    }
+
     public List<Task> getAllTasks(User owner) {
+        if (owner == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+            owner = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
         return taskRepository.findByOwner(owner);
     }
 
+    public Task completeTask(String id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+        
+        task.setCompleted(true);
+        return taskRepository.save(task);
+    }
+    public Task uncompleteTask(String id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+
+        task.setCompleted(false);
+        return taskRepository.save(task);
+    }
+    
     public Task createTask(Task task) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         

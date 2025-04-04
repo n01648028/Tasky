@@ -16,7 +16,7 @@
                 </div>
                 <div sec:authorize="isAuthenticated()">
                     <a href="/tasks/new" class="btn btn-primary btn-lg me-3">Create Task</a>
-                    <a href="/calendar" class="btn btn-outline-primary btn-lg">View Calendar</a>
+                    <a href="/tasks" class="btn btn-outline-primary btn-lg">View All Tasks</a>
                 </div>
             </div>
             <div class="col-md-6">
@@ -25,46 +25,7 @@
         </div>
     </div>
 
-    <div sec:authorize="isAuthenticated()">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Your Recent Tasks</h2>
-            <a href="/tasks" class="btn btn-sm btn-outline-primary">View All</a>
-        </div>
-        
-        <div th:if="${tasks != null and !tasks.empty}">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <div class="col" th:each="task : ${tasks}">
-                    <div class="card h-100" th:classappend="${task.priority == T(com.humber.Tasky.model.Task.Priority).HIGH ? 'task-priority-high' : 
-                                                             (task.priority == T(com.humber.Tasky.model.Task.Priority).MEDIUM ? 'task-priority-medium' : 'task-priority-low')}">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title mb-0" th:text="${task.title}"></h5>
-                                <span th:if="${task.completed}" class="badge bg-success">Done</span>
-                                <span th:unless="${task.completed}" class="badge bg-warning">Pending</span>
-                            </div>
-                            <p class="card-text text-muted" th:text="${task.description} ?: 'No description'"></p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted" th:text="${#temporals.format(task.dueDate, 'MMM dd, yyyy')}"></small>
-                                <span class="badge" 
-                                      th:classappend="${task.priority == T(com.humber.Tasky.model.Task.Priority).HIGH ? 'bg-danger' : 
-                                                      (task.priority == T(com.humber.Tasky.model.Task.Priority).MEDIUM ? 'bg-warning' : 'bg-success')}"
-                                      th:text="${task.priority}"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div th:unless="${tasks != null and !tasks.empty}" class="empty-state">
-            <img src="https://illustrations.popsy.co/amber/reading-list.svg" alt="No tasks" width="200" class="mb-4">
-            <h4>No tasks found</h4>
-            <p class="text-muted">Get started by creating your first task</p>
-            <a href="/tasks/new" class="btn btn-primary mt-3">Create Task</a>
-        </div>
-    </div>
-    
-    <div sec:authorize="!isAuthenticated()" class="features-section mt-5 pt-5">
+    <div class="features-section mt-5 pt-5">
         <h2 class="text-center mb-5">Why Choose Tasky?</h2>
         <div class="row g-4">
             <div class="col-md-4">

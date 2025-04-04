@@ -43,14 +43,11 @@ public class TaskController {
         taskService.deleteTask(id);
     }
 
-    @GetMapping("/calendar")
-    public List<Task> getTasksByDateRange(
-            @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end,
-            @AuthenticationPrincipal User user) {
-        return taskService.getTasksByDateRange(user, start, end);
+    @PostMapping("/complete/{taskId}")
+    public Task completeTask(@PathVariable String taskId) {
+        return taskService.completeTask(taskId);
     }
-
+    
     @GetMapping("/completed")
     public List<Task> getCompletedTasks(
             @RequestParam boolean completed,

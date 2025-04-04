@@ -26,12 +26,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/logout", "/css/**", "/js/**", "/images/**", "/error", "/favicon.ico").permitAll()
                 .requestMatchers("/api/auth/**", "/api/tasks/**", "/api/tasks").permitAll()
-                .requestMatchers("/calendar", "/profile", "/calendar/**", "/tasks/**").authenticated()
+                .requestMatchers( "/profile", "/tasks/edit/**", "/tasks/**", "/tasks").authenticated()
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/calendar", true)
+                .defaultSuccessUrl("/tasks", true)
                 .usernameParameter("email")
                 .failureUrl("/login?error=true")
                 .permitAll())

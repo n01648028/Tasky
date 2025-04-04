@@ -119,13 +119,11 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <div style="padding-right: 30px;"></div>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav me-auto" sec:authorize="isAuthenticated()">
-                <a class="nav-link" href="/tasks/new">
-                    <i class="mdi mdi-plus-circle-outline me-1"></i> New Task
-                </a>
-                <a class="nav-link" href="/calendar">
-                    <i class="mdi mdi-calendar-month-outline me-1"></i> Calendar
+                <a class="nav-link" href="/tasks">
+                    <i class="mdi mdi-format-list-bulleted me-1"></i> Tasks
                 </a>
                 <a class="nav-link" href="/profile">
                     <i class="mdi mdi-account-circle-outline me-1"></i> Profile

@@ -3,6 +3,7 @@ package com.humber.Tasky.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,9 +19,11 @@ public class Task {
     private Priority priority;
     
     @DBRef(lazy = true)
+    @JsonBackReference("owner-tasks")
     private User owner;
     
     @DBRef(lazy = true)
+    @JsonBackReference("creator-tasks")
     private User createdBy;
 
     public enum Priority { LOW, MEDIUM, HIGH }

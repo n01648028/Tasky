@@ -10,11 +10,11 @@
             <div class="card">
                 <div class="card-body text-center">
                     <div class="avatar-container mb-3">
-                        <img th:src="${user.avatarUrl} ?: 'https://ui-avatars.com/api/?name=' + ${user.fullName} + '&background=random'" 
+                        <img th:src="${user != null && user.avatarUrl != null ? user.avatarUrl : 'https://ui-avatars.com/api/?name=' + (user != null ? user.fullName : 'Guest') + '&background=random'}" 
                              class="rounded-circle" width="120" height="120" alt="Avatar">
                     </div>
-                    <h4 th:text="${user.fullName}"></h4>
-                    <p class="text-muted" th:text="${user.email}"></p>
+                    <h4 th:text="${user != null ? user.fullName : 'Guest'}"></h4>
+                    <p class="text-muted" th:text="${user != null ? user.email : 'No email available'}"></p>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                 <div class="card-body">
                     <h3 class="mb-4">Invitations</h3>
                     
-                    <div th:if="${user.invitations != null and !user.invitations.empty}">
+                    <div th:if="${user != null and user.invitations != null and !user.invitations.empty}">
                         <div class="list-group">
                             <div th:each="invitation : ${user.invitations}" class="list-group-item d-flex justify-content-between align-items-center">
                                 <span th:text="${invitation}"></span>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                     </div>
-                    <div th:unless="${user.invitations != null and !user.invitations.empty}" class="empty-state">
+                    <div th:unless="${user != null and user.invitations != null and !user.invitations.empty}" class="empty-state">
                         <i class="mdi mdi-email-remove-outline display-4 text-muted mb-3"></i>
                         <h5>No pending invitations</h5>
                     </div>
