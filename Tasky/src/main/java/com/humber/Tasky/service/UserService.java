@@ -73,12 +73,12 @@ public class UserService {
         return user1.getFriends().contains(userId2);
     }
 
-    public FriendRequest sendFriendRequest(String senderId, String recipientEmail) {
+    public FriendRequest sendFriendRequest(String senderEmail, String recipientEmail) {
         if (recipientEmail == null || recipientEmail.trim().isEmpty()) {
             throw new RuntimeException("Recipient email cannot be null or empty");
         }
 
-        User sender = userRepository.findById(senderId)
+        User sender = userRepository.findByEmail(senderEmail)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 
         User recipient = userRepository.findByEmail(recipientEmail)
@@ -88,18 +88,18 @@ public class UserService {
             throw new RuntimeException("Cannot send friend request to yourself");
         }
 
-        if (areUsersConnected(senderId, recipient.getId())) {
+        if (areUsersConnected(sender.getId(), recipient.getId())) {
             throw new RuntimeException("Users are already friends");
         }
 
         Optional<FriendRequest> existingRequest = friendRequestRepository
-                .findBySenderIdAndRecipientId(senderId, recipient.getId());
+                .findBySenderIdAndRecipientId(sender.getId(), recipient.getId());
 
         if (existingRequest.isPresent()) {
             throw new RuntimeException("Friend request already sent");
         }
 
-        FriendRequest friendRequest = new FriendRequest(senderId, recipient.getId());
+        FriendRequest friendRequest = new FriendRequest(sender.getId(), recipient.getId());
         friendRequestRepository.save(friendRequest);
 
         sender.addSentFriendRequest(friendRequest.getId());
