@@ -18,17 +18,27 @@
 
                         <form th:action="@{/login}" method="post">
                             <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                            <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                                <i class="mdi mdi-alert-circle-outline me-2"></i> Invalid email or password. Please try again.
+                            
+                            <!-- Corrected parameter checks -->
+                            <div th:if="${param.error != null}">
+                                <div class="alert alert-danger">Invalid email or password</div>
                             </div>
-                            <div th:if="${param.logout}" class="alert alert-success" role="alert">
-                                <i class="mdi mdi-check-circle-outline me-2"></i> You have been successfully logged out.
+                            <div th:if="${param.logout != null}">
+                                <div class="alert alert-success">You have been logged out</div>
                             </div>
-                            <div th:if="${success}" class="alert alert-success" role="alert">
-                                <i class="mdi mdi-check-circle-outline me-2"></i>
-                                <span th:text="${success}"></span>
+                            <div th:if="${param.invalidSession != null}">
+                                <div class="alert alert-warning">Session invalid, please login again</div>
                             </div>
-
+                            <div th:if="${param.sessionExpired != null}">
+                                <div class="alert alert-warning">Session expired, please login again</div>
+                            </div>
+                            <div th:if="${param.success != null}">
+                                <div class="alert alert-success">Registration successful, please login</div>
+                            </div>
+                            <div th:if="${param.registered != null}">
+                                <div class="alert alert-success">You have successfully registered</div>
+                            </div>
+                            
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <div class="input-group">
@@ -56,8 +66,6 @@
                             </div>
                         </form>
                     </div>
-                    
-                    
                 </div>
             </div>
         </div>

@@ -28,6 +28,9 @@ public class User {
     
     private String avatarUrl;
     private List<String> invitations = new ArrayList<>();
+    private List<String> friends = new ArrayList<>();
+    private List<String> sentFriendRequests = new ArrayList<>();
+    private List<String> receivedFriendRequests = new ArrayList<>();
     
     @DBRef(lazy = true)
     @JsonManagedReference("owner-tasks")
@@ -53,6 +56,9 @@ public class User {
     public String getAvatarUrl() { return avatarUrl; }
     public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
     public List<String> getInvitations() { return invitations; }
+    public List<String> getFriends() { return friends; }
+    public List<String> getSentFriendRequests() { return sentFriendRequests; }
+    public List<String> getReceivedFriendRequests() { return receivedFriendRequests; }
     public Set<Task> getTasks() { return tasks; }
 
     // Business methods
@@ -64,6 +70,36 @@ public class User {
 
     public void removeInvitation(String inviterId) {
         invitations.remove(inviterId);
+    }
+
+    public void addFriend(String friendId) {
+        if (!friends.contains(friendId)) {
+            friends.add(friendId);
+        }
+    }
+
+    public void removeFriend(String friendId) {
+        friends.remove(friendId);
+    }
+
+    public void addSentFriendRequest(String requestId) {
+        if (!sentFriendRequests.contains(requestId)) {
+            sentFriendRequests.add(requestId);
+        }
+    }
+
+    public void removeSentFriendRequest(String requestId) {
+        sentFriendRequests.remove(requestId);
+    }
+
+    public void addReceivedFriendRequest(String requestId) {
+        if (!receivedFriendRequests.contains(requestId)) {
+            receivedFriendRequests.add(requestId);
+        }
+    }
+
+    public void removeReceivedFriendRequest(String requestId) {
+        receivedFriendRequests.remove(requestId);
     }
 
     public void addTask(Task task) {
