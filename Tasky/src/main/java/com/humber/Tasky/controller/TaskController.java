@@ -66,7 +66,6 @@ public Task uncompleteTask(@PathVariable String taskId) {
             @RequestParam String recipientEmail,
             @AuthenticationPrincipal User user) {
         return taskService.shareTask(taskId, user,
-                userService.getUserByEmail(recipientEmail)
-                        .orElseThrow(() -> new RuntimeException("Recipient not found")));
+                userService.getUserByEmail(recipientEmail));
     }
 }

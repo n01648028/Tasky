@@ -41,8 +41,7 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
     public User updateUser(String id, User userDetails) {
@@ -179,7 +178,7 @@ public class UserService {
 
         // Remove any pending friend requests between these users
         List<FriendRequest> requests = friendRequestRepository
-                .findBySenderIdAndRecipientIdOrRecipientIdAndSenderId(userId, friendId, friendId, userId);
+                .findBySenderIdAndRecipientIdOrRecipientIdAndSenderId(userId, friendId);
 
         for (FriendRequest request : requests) {
             user.removeSentFriendRequest(request.getId());

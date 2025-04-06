@@ -80,6 +80,6 @@ public class AuthService {
     }
 
     public String generateToken(Authentication authentication) {
-        return jwtUtil.generateToken(authentication);
+        return jwtUtil.generateToken((UserDetails) authentication.getDetails());
     }
 }
