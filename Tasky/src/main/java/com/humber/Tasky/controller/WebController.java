@@ -1,11 +1,9 @@
 package com.humber.Tasky.controller;
 
-import com.humber.Tasky.model.FriendRequest;
-import com.humber.Tasky.model.FriendRequestWithUser;
-import com.humber.Tasky.model.Task;
-import com.humber.Tasky.model.User;
+import com.humber.Tasky.model.*;
 import com.humber.Tasky.service.AuthService;
 import com.humber.Tasky.service.TaskService;
+import com.humber.Tasky.service.TeamService;
 import com.humber.Tasky.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +25,14 @@ public class WebController {
     private final AuthService authService;
     private final TaskService taskService;
     private final UserService userService;
+    private final TeamService teamService;
 
     @Autowired
-    public WebController(AuthService authService, TaskService taskService, UserService userService) {
+    public WebController(AuthService authService, TaskService taskService, UserService userService, TeamService teamService) {
         this.taskService = taskService;
         this.authService = authService;
         this.userService = userService;
+        this.teamService = teamService;
     }
 
     @GetMapping("/")
@@ -205,5 +205,12 @@ public String profile(Principal principal, Model model) {
         List<Task> tasks = taskService.getAllTasks(user);
         model.addAttribute("tasks", tasks);
         return "tasks";
+    }
+
+    @GetMapping("/teams")
+    public String listUserTeams(@AuthenticationPrincipal User user, Model model) {
+        List<Team> teams = teamService.getAllTeams(user);
+        model.addAttribute("teams", teams);
+        return "teams";
     }
 }
