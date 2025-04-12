@@ -213,4 +213,16 @@ public String profile(Principal principal, Model model) {
         model.addAttribute("teams", teams);
         return "teams";
     }
+    @GetMapping("/teams/new")
+    public String showTeamForm(@AuthenticationPrincipal Team team, Model model) {
+        return "team-form";
+    }
+
+    @GetMapping("/teams/edit/{id}")
+    public String showEditTeamForm(@PathVariable String id, @AuthenticationPrincipal User user, Model model) {
+        Team team = teamService.getTeamById(id);
+        model.addAttribute("team", team);
+        return "team-edit";
+    }
+
 }

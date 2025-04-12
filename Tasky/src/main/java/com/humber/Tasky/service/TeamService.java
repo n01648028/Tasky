@@ -1,5 +1,6 @@
 package com.humber.Tasky.service;
 
+import com.humber.Tasky.model.Task;
 import com.humber.Tasky.model.Team;
 import com.humber.Tasky.model.TeamEntry;
 import com.humber.Tasky.model.User;
@@ -98,5 +99,18 @@ public class TeamService {
         teamEntryRepository.deleteAll(teamEntries);
         
         teamRepository.delete(team);
+    }
+
+    public Team shareTeam(String teamId, User owner, User newOwner) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        Team sharedTeam = new Team();
+        sharedTeam.setName(team.getName());
+        sharedTeam.setDescription(team.getDescription());
+
+        Team savedTeam = teamRepository.save(sharedTeam);
+
+        return savedTeam;
     }
 }
