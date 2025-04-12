@@ -86,6 +86,7 @@ public class TeamService {
                 .orElseThrow(() -> new RuntimeException("Team not found"));
 
         team.setName(teamDetails.getName());
+        team.setDescription(teamDetails.getDescription());
         team.setMembers(teamDetails.getMembers());
         
         return teamRepository.save(team);
