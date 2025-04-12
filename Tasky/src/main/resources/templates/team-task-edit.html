@@ -16,7 +16,7 @@
                         </a>
                     </div>
                     
-                    <form id="taskForm" th:object="${task}">
+                    <form id="teamTaskForm" th:object="${task}">
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
@@ -55,10 +55,10 @@
     </div>
     
     <script th:inline="javascript">
-    document.getElementById('taskForm').addEventListener('submit', function(e) {
+    document.getElementById('teamTaskForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const taskId = /*[[${task.id}]]*/ '';
+        const teamId = /*[[${task.id}]]*/ '';
         const formData = {
             title: document.getElementById('title').value,
             description: document.getElementById('description').value,
@@ -66,7 +66,7 @@
             priority: document.getElementById('priority').value
         };
         
-        fetch(`/api/tasks/${taskId}`, {
+        fetch(`/api/tasks/${teamId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -75,7 +75,7 @@
         })
         .then(response => {
             if (response.ok) {
-                window.location.href = '/tasks';
+                window.location.href = 'teams/{teamId}/tasks';
             } else {
                 throw new Error('Failed to update task');
             }

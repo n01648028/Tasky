@@ -16,7 +16,7 @@
                         </a>
                     </div>
                     
-                    <form id="taskForm">
+                    <form id="teamTaskForm">
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" class="form-control" id="title" name="title" required>
@@ -55,7 +55,7 @@
     </div>
     
     <script>
-        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+        document.getElementById('teamTaskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const formData = {
