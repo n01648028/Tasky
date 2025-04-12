@@ -1,10 +1,7 @@
 package com.humber.Tasky.controller;
 
 import com.humber.Tasky.model.*;
-import com.humber.Tasky.service.AuthService;
-import com.humber.Tasky.service.TaskService;
-import com.humber.Tasky.service.TeamService;
-import com.humber.Tasky.service.UserService;
+import com.humber.Tasky.service.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,13 +23,15 @@ public class WebController {
     private final TaskService taskService;
     private final UserService userService;
     private final TeamService teamService;
+    private final TeamTaskService teamTaskService;
 
     @Autowired
-    public WebController(AuthService authService, TaskService taskService, UserService userService, TeamService teamService) {
+    public WebController(AuthService authService, TaskService taskService, UserService userService, TeamService teamService, TeamTaskService teamTaskService) {
         this.taskService = taskService;
         this.authService = authService;
         this.userService = userService;
         this.teamService = teamService;
+        this.teamTaskService = teamTaskService;
     }
 
     @GetMapping("/")
@@ -42,10 +41,10 @@ public class WebController {
             model.addAttribute("tasks", tasks);
         }
         model.addAttribute("features", List.of(
-            "Organize your tasks efficiently",
-            "Share tasks with team members",
-            "Calendar view for better planning",
-            "Priority-based task management"
+                "Organize your tasks efficiently",
+                "Share tasks with team members",
+                "Calendar view for better planning",
+                "Priority-based task management"
         ));
         return "index";
     }
@@ -74,9 +73,9 @@ public class WebController {
     }
 
     @PostMapping("/register")
-    public String processRegistration(@ModelAttribute User user, 
-                                    Model model, 
-                                    RedirectAttributes redirectAttributes) {
+    public String processRegistration(@ModelAttribute User user,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
         try {
             authService.registerUser(user);
             redirectAttributes.addFlashAttribute("success", "Registration successful!");
@@ -89,28 +88,29 @@ public class WebController {
     }
 
     @GetMapping("/profile")
-public String profile(Principal principal, Model model) {
-    if (principal == null) {
-        return "redirect:/login?error=not_authenticated";
+    public String profile(Principal principal, Model model) {
+        if (principal == null) {
+            return "redirect:/login?error=not_authenticated";
+        }
+
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            model.addAttribute("user", currentUser);
+            model.addAttribute("isCurrentUser", true);
+            model.addAttribute("isConnected", false);
+            model.addAttribute("hasPendingRequest", false);
+
+            // Explicitly add requests (though @ModelAttribute should handle this)
+            model.addAttribute("receivedRequests", userService.getPendingFriendRequests(currentUser.getId()));
+            model.addAttribute("sentRequests", userService.getSentFriendRequests(currentUser.getId()));
+
+            return "profile";
+        } catch (Exception e) {
+            System.out.println("Error fetching user profile: " + e.getMessage());
+            return "redirect:/login?error=profile";
+        }
     }
 
-    try {
-        User currentUser = userService.getUserByEmail(principal.getName());
-        model.addAttribute("user", currentUser);
-        model.addAttribute("isCurrentUser", true);
-        model.addAttribute("isConnected", false);
-        model.addAttribute("hasPendingRequest", false);
-        
-        // Explicitly add requests (though @ModelAttribute should handle this)
-        model.addAttribute("receivedRequests", userService.getPendingFriendRequests(currentUser.getId()));
-        model.addAttribute("sentRequests", userService.getSentFriendRequests(currentUser.getId()));
-        
-        return "profile";
-    } catch (Exception e) {
-        System.out.println("Error fetching user profile: " + e.getMessage());
-        return "redirect:/login?error=profile";
-    }
-}
     @GetMapping("/profile/{email}")
     public String viewProfile(@PathVariable String email, Principal principal, Model model) {
         if (principal == null) {
@@ -156,7 +156,7 @@ public String profile(Principal principal, Model model) {
             @RequestParam String fullName,
             Principal principal,
             RedirectAttributes redirectAttributes) {
-        
+
         if (principal == null) {
             return "redirect:/login?error=not_authenticated";
         }
@@ -165,20 +165,20 @@ public String profile(Principal principal, Model model) {
             redirectAttributes.addFlashAttribute("error", "Full name cannot exceed 50 characters.");
             return "redirect:/edit-profile";
         }
-        
-        if (avatarUrl != null && !avatarUrl.isEmpty() && 
-            !avatarUrl.endsWith(".jpg") && !avatarUrl.endsWith(".png")) {
+
+        if (avatarUrl != null && !avatarUrl.isEmpty() &&
+                !avatarUrl.endsWith(".jpg") && !avatarUrl.endsWith(".png")) {
             redirectAttributes.addFlashAttribute("error", "Only .jpg and .png files are allowed for avatar.");
             return "redirect:/edit-profile";
         }
 
         try {
             User currentUser = userService.getUserByEmail(principal.getName());
-            
+
             User updates = new User();
             updates.setFullName(fullName);
             updates.setAvatarUrl(avatarUrl);
-            
+
             userService.updateUser(currentUser.getId(), updates);
             redirectAttributes.addFlashAttribute("success", "Profile updated successfully!");
             return "redirect:/profile";
@@ -213,6 +213,7 @@ public String profile(Principal principal, Model model) {
         model.addAttribute("teams", teams);
         return "teams";
     }
+
     @GetMapping("/teams/new")
     public String showTeamForm(@AuthenticationPrincipal Team team, Model model) {
         return "team-form";
@@ -223,6 +224,29 @@ public String profile(Principal principal, Model model) {
         Team team = teamService.getTeamById(id);
         model.addAttribute("team", team);
         return "team-edit";
+    }
+
+    @GetMapping("/teams/{teamId}/tasks")
+    public String listTeamTasks(@AuthenticationPrincipal User user, Model model, @PathVariable String teamId) {
+        Team team = teamService.getTeamById(teamId);
+        List<TeamTask> tasks = teamTaskService.getAllTasks(team);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("teamId", teamId);
+        return "team-tasks";
+    }
+    @GetMapping("/teams/{teamId}/tasks/new")
+    public String showTeamTaskForm(@AuthenticationPrincipal User user, Model model, @PathVariable String teamId) {
+        Team team = teamService.getTeamById(teamId);
+        model.addAttribute("teamId", teamId);
+        return "team-task-form";
+    }
+
+    @GetMapping("/teams/{teamId}/tasks/edit/{id}")
+    public String showEditTeamTaskForm(@PathVariable String id, @AuthenticationPrincipal User user, Model model, @PathVariable String teamId) {
+        Task task = taskService.getTaskById(id);
+        model.addAttribute("task", task);
+        model.addAttribute("teamId", teamId);
+        return "team-task-edit";
     }
 
 }

@@ -38,6 +38,9 @@
                                                     th:data-team-id="${team.id}">
                                                 <i class="mdi mdi-delete"></i>
                                             </button>
+                                            <a th:href="@{'/teams/' + ${team.id} + '/tasks'}" class="btn btn-sm btn-outline-secondary">
+                                                <a>View Tasks</a>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

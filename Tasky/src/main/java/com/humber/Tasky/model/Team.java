@@ -18,6 +18,10 @@ public class Team {
     private String description;
     private List<String> members = new ArrayList<>();
 
+    @DBRef(lazy = true)
+    @JsonManagedReference("owner-tasks")
+    private Set<TeamTask> tasks = new HashSet<>();
+
     public Team() {}
 
     public Team(String name) {
@@ -33,12 +37,16 @@ public class Team {
     public void setDescription(String description) { this.description = description; }
     public List<String> getMembers() { return members; }
     public void setMembers(List<String> members) { this.members = members; }
+    public Set<TeamTask> getTasks() { return tasks; }
 
     // Business methods
     public void addMember(String memberId) {
         if (!members.contains(memberId)) {
             members.add(memberId);
         }
+    }
+    public void addTask(TeamTask task) {
+        tasks.add(task);
     }
 
     public void removeMember(String memberId) {
