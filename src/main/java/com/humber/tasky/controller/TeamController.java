@@ -1,4 +1,4 @@
-package com.humber.tasky.controller;
+package com.humber.Tasky.controller;
 
 import com.humber.tasky.model.Team;
 import com.humber.tasky.service.TeamService;

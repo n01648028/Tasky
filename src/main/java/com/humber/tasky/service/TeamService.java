@@ -1,4 +1,4 @@
-package com.humber.tasky.service;
+package com.humber.Tasky.service;
 
 import com.humber.tasky.model.Team;
 import com.humber.tasky.repository.TeamRepository;

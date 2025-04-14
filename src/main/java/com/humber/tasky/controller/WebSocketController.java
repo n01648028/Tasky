@@ -1,4 +1,4 @@
-package com.humber.tasky.controller;
+package com.humber.Tasky.controller;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
