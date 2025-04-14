@@ -53,7 +53,7 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return "User2 registered successfully";
+        return "User registered successfully";
     }
 
     public String loginUser(String email, String password,

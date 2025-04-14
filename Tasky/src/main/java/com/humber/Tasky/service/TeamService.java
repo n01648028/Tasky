@@ -44,7 +44,7 @@ public class TeamService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getName();
             owner = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User2 not found"));
+                    .orElseThrow(() -> new RuntimeException("User not found"));
         }
         teams = new ArrayList<>();
         teamEntries = teamEntryRepository.findByUserId(owner.getId());
@@ -62,12 +62,12 @@ public class TeamService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User2 must be authenticated to create a team");
+            throw new RuntimeException("User must be authenticated to create a team");
         }
         
         String email = authentication.getName();
         User createdBy = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User2 not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         team.addMember(createdBy.getId());
         Team savedTeam = teamRepository.save(team);
