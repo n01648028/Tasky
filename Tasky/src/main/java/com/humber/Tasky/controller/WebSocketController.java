@@ -18,4 +18,10 @@ public class WebSocketController {
     public String handleCall(String signalingData) {
         return signalingData;
     }
+
+    @MessageMapping("/ws")
+    @SendTo("/topic/updates")
+    public String handleWebSocketConnection(String message) {
+        return message;
+    }
 }

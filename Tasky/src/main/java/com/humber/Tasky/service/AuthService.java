@@ -78,8 +78,4 @@ public class AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
     }
-
-    public String generateToken(Authentication authentication) {
-        return jwtUtil.generateToken((UserDetails) authentication.getDetails());
-    }
 }

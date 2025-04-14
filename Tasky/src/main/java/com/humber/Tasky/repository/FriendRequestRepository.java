@@ -1,7 +1,6 @@
 package com.humber.Tasky.repository;
 
 import com.humber.Tasky.model.FriendRequest;
-import com.humber.Tasky.model.User;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -31,5 +30,5 @@ public interface FriendRequestRepository extends MongoRepository<FriendRequest, 
     
     @Query("{ $or: [ {'senderId': ?0, 'recipientId': ?1}, {'senderId': ?1, 'recipientId': ?0} ] }")
     List<FriendRequest> findBySenderIdAndRecipientIdOrRecipientIdAndSenderId(
-        String userId1, String userId2);
+        String userId1, String userId2, String friendId, String userId);
 }

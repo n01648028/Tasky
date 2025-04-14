@@ -3,6 +3,7 @@ package com.humber.Tasky.service;
 import com.humber.Tasky.model.*;
 import com.humber.Tasky.repository.FriendRequestRepository;
 import com.humber.Tasky.repository.UserRepository;
+import com.humber.Tasky.repository.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,14 +23,17 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
+    private final MessageRepository messageRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository, 
                      FriendRequestRepository friendRequestRepository,
+                     MessageRepository messageRepository,
                      PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.friendRequestRepository = friendRequestRepository;
+        this.messageRepository = messageRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -41,7 +47,8 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
     public User updateUser(String id, User userDetails) {
@@ -143,10 +150,12 @@ public class UserService {
     }
 
     public void rejectFriendRequest(String userId, String requestId) {
+        logger.info("Rejecting friend request: userId={}, requestId={}", userId, requestId);
         FriendRequest friendRequest = friendRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Friend request not found"));
 
         if (!friendRequest.getRecipientId().equals(userId)) {
+            logger.error("Unauthorized rejection attempt: userId={}, requestId={}", userId, requestId);
             throw new RuntimeException("Not authorized - you must be the sender or recipient to reject this friend request");
         }
 
@@ -160,14 +169,15 @@ public class UserService {
 
         sender.removeSentFriendRequest(requestId);
         recipient.removeReceivedFriendRequest(requestId);
-        
+
         userRepository.save(sender);
         userRepository.save(recipient);
-        
-        System.out.println(LocalDateTime.now() + " - Friend request rejected by " + userId);
+
+        logger.info("Friend request rejected successfully: userId={}, requestId={}", userId, requestId);
     }
 
     public void removeFriend(String userId, String friendId) {
+        logger.info("Removing friend: userId={}, friendId={}", userId, friendId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         User friend = userRepository.findById(friendId)
@@ -177,22 +187,23 @@ public class UserService {
         friend.removeFriend(userId);
 
         // Remove any pending friend requests between these users
-        List<FriendRequest> requests = friendRequestRepository
-                .findBySenderIdAndRecipientIdOrRecipientIdAndSenderId(userId, friendId);
-
-        for (FriendRequest request : requests) {
-            user.removeSentFriendRequest(request.getId());
-            user.removeReceivedFriendRequest(request.getId());
-            friend.removeSentFriendRequest(request.getId());
-            friend.removeReceivedFriendRequest(request.getId());
-            friendRequestRepository.delete(request);
+        Optional<FriendRequest> requests = friendRequestRepository
+                .findBySenderIdAndRecipientId(userId, friendId);
+        if (requests.isPresent()) {
+            
+            requests.ifPresent(request -> {
+                user.removeSentFriendRequest(request.getId());
+                user.removeReceivedFriendRequest(request.getId());
+                friend.removeSentFriendRequest(request.getId());
+                friend.removeReceivedFriendRequest(request.getId());
+                friendRequestRepository.delete(request);
+            });
+    
+            userRepository.save(user);
+            userRepository.save(friend);
+    
+            
         }
-
-        userRepository.save(user);
-        userRepository.save(friend);
-
-        System.out.println(LocalDateTime.now() + " - Friendship removed between " +
-                user.getEmail() + " and " + friend.getEmail());
     }
 
     public List<FriendRequest> getPendingFriendRequests(String userId) {
@@ -283,5 +294,60 @@ public class UserService {
 
         user.setAvatarUrl(newAvatarUrl);
         userRepository.save(user);
+    }
+
+    public void updateUserOnlineStatus(String userId, boolean isOnline) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setOnline(isOnline);
+        userRepository.save(user);
+    }
+
+    // New methods for online friends and messaging
+    public List<User> getOnlineFriends(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Assuming a method exists to fetch online friends
+        return user.getFriends().stream()
+                .map(friendId -> userRepository.findById(friendId).orElse(null))
+                .filter(Objects::nonNull)
+                .filter(User::isOnline) // Assuming User has an isOnline method
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getOnlineUsers() {
+        return userRepository.findByOnline(true);
+    }
+
+    public void sendMessage(String senderId, String recipientId, String message) {
+        if (message == null || message.trim().isEmpty()) {
+            throw new RuntimeException("Message content cannot be empty");
+        }
+
+        if (!userRepository.existsById(senderId)) {
+            throw new RuntimeException("Sender not found");
+        }
+
+        if (!userRepository.existsById(recipientId)) {
+            throw new RuntimeException("Recipient not found");
+        }
+
+        Message newMessage = new Message(senderId, recipientId, message, LocalDateTime.now());
+        messageRepository.save(newMessage);
+    }
+
+    public List<String> getChatMessages(String userId, String friendId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+
+        if (!userRepository.existsById(friendId)) {
+            throw new RuntimeException("Friend not found");
+        }
+
+        return messageRepository.findBySenderIdAndRecipientId(userId, friendId).stream()
+                .map(Message::getContent)
+                .collect(Collectors.toList());
     }
 }

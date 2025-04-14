@@ -160,6 +160,31 @@
         .btn-close {
             filter: invert(1);
         }
+
+        .clickable-div {
+            cursor: pointer;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bs-secondary-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+        }
     </style>
 </head>
 
@@ -183,22 +208,66 @@
                     <a class="nav-link" href="/profile">
                         <i class="mdi mdi-account-circle-outline me-1"></i> Profile
                     </a>
-                    <a class="nav-link" href="/teams">
-                        <i class="mdi mdi-account-circle-outline me-1"></i> Teams
-                    </a>
                 </div>
                 <div class="navbar-nav">
                     <div sec:authorize="isAuthenticated()">
-                        <!-- Friend Requests Button -->
-                        <!-- In layout.html -->
-                        <div class="friend-requests-btn nav-link" data-bs-toggle="modal" data-bs-target="#friendRequestsModal">
-                            <i class="mdi mdi-account-plus me-1"></i> Requests
-                            <span th:if="${receivedWithSenders != null and not receivedWithSenders.empty}"
-                                  class="badge bg-danger friend-requests-badge">
-                                <span th:text="${receivedWithSenders.size()}">0</span>
-                            </span>
+                        <!-- Combined Requests Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="requestsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Requests
+                            </button>
+                            <div class="dropdown-menu p-3" aria-labelledby="requestsDropdown" style="width: 400px;">
+                                <!-- Friend Requests Section -->
+                                <div>
+                                    <h6 class="dropdown-header">Friend Requests</h6>
+                                    <div th:if="${receivedWithSenders != null and !receivedWithSenders.isEmpty()}">
+                                        <div th:each="request : ${receivedWithSenders}" class="d-flex align-items-center mb-2">
+                                            <img th:src="${request.sender.avatarUrl}" alt="Avatar" class="request-avatar me-2">
+                                            <span class="request-user-info" th:text="${request.sender.fullName}"></span>
+                                            <div class="request-actions">
+                                                <button class="btn btn-success btn-sm" th:onclick="'acceptRequest(' + ${request.id} + ')'">Accept</button>
+                                                <button class="btn btn-danger btn-sm" th:onclick="'rejectRequest(' + ${request.id} + ')'">Reject</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${receivedWithSenders == null or receivedWithSenders.isEmpty()}" class="text-muted">
+                                        No friend requests.
+                                    </div>
+                                </div>
+
+                                <!-- Task Invitations Section -->
+                                <div class="mt-3">
+                                    <h6 class="dropdown-header">Task Invitations</h6>
+                                    <div th:if="${taskInvitations != null and !taskInvitations.isEmpty()}">
+                                        <div th:each="task : ${taskInvitations}" class="d-flex align-items-center mb-2">
+                                            <span class="me-2" th:text="${task.title}"></span>
+                                            <div class="request-actions">
+                                                <button class="btn btn-success btn-sm" th:onclick="'acceptTaskInvitation(' + ${task.id} + ')'">Accept</button>
+                                                <button class="btn btn-danger btn-sm" th:onclick="'rejectTaskInvitation(' + ${task.id} + ')'">Reject</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${taskInvitations == null or taskInvitations.isEmpty()}" class="text-muted">
+                                        No task invitations.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
+                        <!-- Add Online Friends Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="onlineFriendsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Online Friends
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="onlineFriendsDropdown">
+                                <li th:if="${onlineFriends != null and !onlineFriends.isEmpty()}" th:each="friend : ${onlineFriends}">
+                                    <a class="dropdown-item" th:text="${friend.fullName}" th:onclick="'openChat(\'' + ${friend.id} + '\')'"></a>
+                                </li>
+                                <li th:if="${onlineFriends == null or onlineFriends.isEmpty()}" class="text-muted text-center">
+                                    No online friends.
+                                </li>
+                            </ul>
+                        </div>
 
                         <!-- Logout Button -->
                         <form th:action="@{/logout}" method="post" class="d-inline">
@@ -223,70 +292,52 @@
         </div>
     </nav>
 
-    <!-- Friend Requests Modal -->
-    <div class="modal fade" id="friendRequestsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Friend Requests</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Received Requests -->
-                    <h6>Received Requests</h6>
-                    <div th:if="${receivedWithSenders == null or receivedWithSenders.isEmpty()}">
-                        <p class="text-center text-muted">No received friend requests</p>
-                    </div>
-                    <div th:each="requestWithUser : ${receivedWithSenders}" class="request-item">
-                        <div class="d-flex align-items-center">
-                            <img th:src="${requestWithUser.user?.avatarUrl} ?: 'https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png'"
-                                 class="request-avatar">
-                            <div class="request-user-info">
-                                <div th:text="${requestWithUser.user?.fullName}"></div>
-                                <small class="text-muted" th:text="${requestWithUser.user?.email}"></small>
-                            </div>
-                        </div>
-                        <div class="request-actions">
-                            <button class="btn btn-sm btn-success" 
-                                    th:data-request-id="${requestWithUser.request.id}"
-                                    onclick="acceptRequest(this.getAttribute('data-request-id'))">
-                                <i class="mdi mdi-check"></i> Accept
-                            </button>
-                            <button class="btn btn-sm btn-danger" 
-                                    th:data-request-id="${requestWithUser.request.id}"
-                                    onclick="rejectRequest(this.getAttribute('data-request-id'))">
-                                <i class="mdi mdi-close"></i> Reject
-                            </button>
-                        </div>
-                    </div>
-    
-                    <!-- Sent Requests -->
-                    <h6 class="mt-4">Sent Requests</h6>
-                    <div th:if="${sentWithRecipients == null or sentWithRecipients.isEmpty()}">
-                        <p class="text-center text-muted">No sent friend requests</p>
-                    </div>
-                    <div th:each="requestWithUser : ${sentWithRecipients}" class="request-item">
-                        <div class="d-flex align-items-center">
-                            <img th:src="${requestWithUser.user?.avatarUrl} ?: 'https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png'"
-                                 class="request-avatar">
-                            <div class="request-user-info">
-                                <div th:text="${requestWithUser.user?.fullName}"></div>
-                                <small class="text-muted" th:text="${requestWithUser.user?.email}"></small>
-                            </div>
-                        </div>
-                        <div class="request-actions">
-                            <button class="btn btn-sm btn-warning" disabled>
-                                <i class="mdi mdi-clock-outline"></i> Pending
-                            </button>
-                        </div>
-                    </div>
+    <div class="container mt-4">
+        <div th:replace="${content}"></div>
+    </div>
+
+    <!-- Add Chat Box -->
+    <div id="chatBox" class="position-fixed bottom-0 end-0 p-3" style="width: 300px; display: none;">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span id="chatFriendName">Chat</span>
+                <button type="button" class="btn-close" aria-label="Close" onclick="closeChat()"></button>
+            </div>
+            <div class="card-body" id="chatMessages" style="height: 200px; overflow-y: auto;"></div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Type a message...">
+                    <button class="btn btn-primary" type="button" onclick="sendMessage()">Send</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container mt-4">
-        <div th:replace="${content}"></div>
+    <!-- Messenger Section -->
+    <div id="messenger">
+        <h3>Messenger</h3>
+        <div id="messages"></div>
+        <input type="text" id="message-input" placeholder="Type a message..." />
+        <button id="send-message">Send</button>
+    </div>
+
+    <!-- Voice Call Section -->
+    <div id="voice-call">
+        <button id="start-call">Start Voice Call</button>
+        <button id="end-call" style="display: none;">End Call</button>
+    </div>
+
+    <!-- Team Request Popup -->
+    <div id="team-request" class="clickable-div">
+        <p>Request to Join a Team</p>
+    </div>
+
+    <div id="team-popup" class="popup">
+        <form id="team-request-form">
+            <label for="team-name">Team Name:</label>
+            <input type="text" id="team-name" name="teamName" required>
+            <button type="submit">Request</button>
+        </form>
     </div>
 
     <footer class="mt-5 py-3 text-center text-muted">
@@ -351,6 +402,152 @@ function rejectRequest(requestId) {
         alert(error.message);
     });
 }
+
+        function acceptTaskInvitation(taskId) {
+            fetch(`/api/tasks/${taskId}/accept`, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to accept task invitation.');
+                    }
+                });
+        }
+
+        function rejectTaskInvitation(taskId) {
+            fetch(`/api/tasks/${taskId}/reject`, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to reject task invitation.');
+                    }
+                });
+        }
+
+        function openChat(friendId) {
+            document.getElementById('chatBox').style.display = 'block';
+            document.getElementById('chatFriendName').innerText = friendId; // Replace with actual friend name
+            // Load chat messages via AJAX
+        }
+
+        function closeChat() {
+            document.getElementById('chatBox').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('chatInput').value;
+            if (message.trim() === '') return;
+            // Send message via AJAX
+            document.getElementById('chatMessages').innerHTML += `<div>${message}</div>`;
+            document.getElementById('chatInput').value = '';
+        }
+
+        // Ping functionality to update user activity
+        setInterval(() => {
+            fetch('/api/ping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                }
+            }).catch(err => console.error('Ping failed:', err));
+        }, 30000); // Ping every 30 seconds
+
+        // Team request popup functionality
+        document.getElementById('team-request').addEventListener('click', function () {
+            document.getElementById('team-popup').style.display = 'block';
+        });
+
+        document.getElementById('team-request-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const teamName = document.getElementById('team-name').value;
+            // Send request to the server
+            fetch('/api/teams', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: teamName })
+            }).then(response => {
+                if (response.ok) {
+                    alert('Request sent successfully!');
+                    document.getElementById('team-popup').style.display = 'none';
+                } else {
+                    alert('Failed to send request.');
+                }
+            });
+        });
+
+        // Messenger functionality
+        const socket = new WebSocket('ws://localhost:8080/ws');
+
+        socket.onmessage = function (event) {
+            const messagesDiv = document.getElementById('messages');
+            const message = document.createElement('p');
+            message.textContent = event.data;
+            messagesDiv.appendChild(message);
+        };
+
+        document.getElementById('send-message').addEventListener('click', function () {
+            const input = document.getElementById('message-input');
+            socket.send(input.value);
+            input.value = '';
+        });
+
+        // Voice call functionality
+        let localStream;
+        let peerConnection;
+
+        const startCallButton = document.getElementById('start-call');
+        const endCallButton = document.getElementById('end-call');
+
+        startCallButton.addEventListener('click', async function () {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            peerConnection = new RTCPeerConnection();
+
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+            peerConnection.onicecandidate = function (event) {
+                if (event.candidate) {
+                    socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+                }
+            };
+
+            peerConnection.ontrack = function (event) {
+                const audio = document.createElement('audio');
+                audio.srcObject = event.streams[0];
+                audio.autoplay = true;
+                document.body.appendChild(audio);
+            };
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            socket.send(JSON.stringify({ type: 'offer', offer }));
+
+            startCallButton.style.display = 'none';
+            endCallButton.style.display = 'block';
+        });
+
+        endCallButton.addEventListener('click', function () {
+            peerConnection.close();
+            localStream.getTracks().forEach(track => track.stop());
+            startCallButton.style.display = 'block';
+            endCallButton.style.display = 'none';
+        });
+
+        socket.onmessage = async function (event) {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'offer') {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                socket.send(JSON.stringify({ type: 'answer', answer }));
+            } else if (data.type === 'answer') {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+            } else if (data.type === 'candidate') {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+            }
+        };
     </script>
 </body>
 

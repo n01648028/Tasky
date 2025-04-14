@@ -2,7 +2,9 @@ package com.humber.Tasky.controller;
 
 import com.humber.Tasky.model.FriendRequest;
 import com.humber.Tasky.model.FriendRequestWithUser;
+import com.humber.Tasky.model.Task;
 import com.humber.Tasky.model.User;
+import com.humber.Tasky.repository.TaskRepository;
 import com.humber.Tasky.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,8 +24,10 @@ public class GlobalControllerAdvice {
     private static final Logger logger = LoggerFactory.getLogger(GlobalControllerAdvice.class);
 
     private final UserService userService;
+    private final TaskRepository taskRepository;
 
-    public GlobalControllerAdvice(UserService userService) {
+    public GlobalControllerAdvice(UserService userService, TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
         this.userService = userService;
     }
     @ModelAttribute
@@ -59,6 +63,22 @@ public class GlobalControllerAdvice {
                 
             } catch (Exception e) {
                 logger.error("Error loading friend requests", e);
+            }
+        }
+    }
+
+    @ModelAttribute
+    public void addTaskInvitations(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !(auth.getPrincipal() instanceof String)) {
+            try {
+                String email = auth.getName();
+                User user = userService.getUserByEmail(email);
+
+                List<Task> taskInvitations = taskRepository.findByInvitedUsersContaining(user.getId());
+                model.addAttribute("taskInvitations", taskInvitations);
+            } catch (Exception e) {
+                logger.error("Error loading task invitations", e);
             }
         }
     }
