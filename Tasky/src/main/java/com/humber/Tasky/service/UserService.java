@@ -31,7 +31,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // User CRUD operations
+    // User2 CRUD operations
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -41,12 +41,12 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User2 not found with email: " + email));
     }
 
     public User updateUser(String id, User userDetails) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         if (userDetails.getFullName() != null) {
             user.setFullName(userDetails.getFullName());
@@ -60,7 +60,7 @@ public class UserService {
 
     public void deleteUser(String id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found");
+            throw new RuntimeException("User2 not found");
         }
         userRepository.deleteById(id);
     }
@@ -68,7 +68,7 @@ public class UserService {
     // Friend request operations
     public boolean areUsersConnected(String userId1, String userId2) {
         User user1 = userRepository.findById(userId1)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
         return user1.getFriends().contains(userId2);
     }
 
@@ -125,9 +125,9 @@ public class UserService {
         friendRequestRepository.save(friendRequest);
 
         User sender = userRepository.findById(friendRequest.getSenderId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
         User recipient = userRepository.findById(friendRequest.getRecipientId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         sender.addFriend(recipient.getId());
         recipient.addFriend(sender.getId());
@@ -154,9 +154,9 @@ public class UserService {
         friendRequestRepository.save(friendRequest);
 
         User sender = userRepository.findById(friendRequest.getSenderId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
         User recipient = userRepository.findById(friendRequest.getRecipientId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         sender.removeSentFriendRequest(requestId);
         recipient.removeReceivedFriendRequest(requestId);
@@ -169,7 +169,7 @@ public class UserService {
 
     public void removeFriend(String userId, String friendId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new RuntimeException("Friend not found"));
 
@@ -239,7 +239,7 @@ public class UserService {
     // Other user management methods
     public void updatePassword(String userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
@@ -255,7 +255,7 @@ public class UserService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         if (!user.getEmail().equals(newEmail) && userRepository.existsByEmail(newEmail)) {
             throw new RuntimeException("Email already in use");
@@ -271,7 +271,7 @@ public class UserService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         user.setFullName(newFullName);
         userRepository.save(user);
@@ -279,7 +279,7 @@ public class UserService {
 
     public void updateUserAvatar(String userId, String newAvatarUrl) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User2 not found"));
 
         user.setAvatarUrl(newAvatarUrl);
         userRepository.save(user);

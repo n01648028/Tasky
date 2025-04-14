@@ -212,7 +212,7 @@ public String profile(Principal principal, Model model) {
     @ResponseBody
     public List<User> getOnlineFriends(@AuthenticationPrincipal User user) {
         if (user == null) {
-            throw new RuntimeException("User not authenticated");
+            throw new RuntimeException("User2 not authenticated");
         }
         return userService.getOnlineFriends(user.getId());
     }
@@ -221,7 +221,7 @@ public String profile(Principal principal, Model model) {
     @ResponseBody
     public void sendMessage(@AuthenticationPrincipal User user, @RequestParam String recipientId, @RequestParam String message) {
         if (user == null) {
-            throw new RuntimeException("User not authenticated");
+            throw new RuntimeException("User2 not authenticated");
         }
         userService.sendMessage(user.getId(), recipientId, message);
     }
@@ -230,7 +230,7 @@ public String profile(Principal principal, Model model) {
     @ResponseBody
     public List<String> getChatMessages(@AuthenticationPrincipal User user, @PathVariable String friendId) {
         if (user == null) {
-            throw new RuntimeException("User not authenticated");
+            throw new RuntimeException("User2 not authenticated");
         }
         return userService.getChatMessages(user.getId(), friendId);
     }
@@ -239,7 +239,7 @@ public String profile(Principal principal, Model model) {
     @ResponseBody
     public void ping(@AuthenticationPrincipal User user) {
         if (user == null) {
-            throw new RuntimeException("User not authenticated");
+            throw new RuntimeException("User2 not authenticated");
         }
         userService.updateUserOnlineStatus(user.getId(), true);
     }
