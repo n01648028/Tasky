@@ -1,4 +1,4 @@
-package com.humber.tasky.config;
+package com.humber.Tasky.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

@@ -1,4 +1,4 @@
-package com.humber.tasky.model;
+package com.humber.Tasky.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
