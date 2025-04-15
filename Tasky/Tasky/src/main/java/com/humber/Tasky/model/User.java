@@ -36,6 +36,10 @@ public class User {
     @JsonManagedReference("owner-tasks")
     private Set<Task> tasks = new HashSet<>();
 
+    private boolean online; // Add this field to track online status
+
+    private List<Task.Invitation> taskInvitations = new ArrayList<>();
+
     public User() {}
     
     public User(String fullName, String email, String password) {
@@ -60,6 +64,22 @@ public class User {
     public List<String> getSentFriendRequests() { return sentFriendRequests; }
     public List<String> getReceivedFriendRequests() { return receivedFriendRequests; }
     public Set<Task> getTasks() { return tasks; }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public List<Task.Invitation> getTaskInvitations() {
+        return taskInvitations;
+    }
+
+    public void setTaskInvitations(List<Task.Invitation> taskInvitations) {
+        this.taskInvitations = taskInvitations;
+    }
 
     // Business methods
     public void addInvitation(String inviterId) {
