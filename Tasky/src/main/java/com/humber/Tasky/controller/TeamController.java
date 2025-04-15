@@ -118,24 +118,6 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/invite")
-    public ResponseEntity<?> inviteUserToTeam(@PathVariable String teamId, @RequestBody Map<String, String> requestBody) {
-        if (teamId == null || teamId.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Team ID is required"));
-        }
-        String email = requestBody.get("email");
-        if (email == null || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
-        }
-
-        try {
-            teamService.inviteUserToTeam(teamId, email);
-            return ResponseEntity.ok(Map.of("message", "Invitation sent successfully"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        }
-    }
-
-    @PostMapping("/{teamId}/invite-user")
     public ResponseEntity<?> inviteUserToTeam(@PathVariable String teamId, @RequestBody Map<String, String> requestBody, Principal principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "User not authenticated"));
@@ -152,7 +134,7 @@ public class TeamController {
 
             Team team = teamService.getTeamById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
 
-            // Prevent inviting existing members or the owner
+            // Prevent inviting existing members or already invited users
             if (team.getMemberIds().contains(currentUser.getId()) || team.getInvitations().contains(email)) {
                 return ResponseEntity.badRequest().body(Map.of("message", "User is already a member or has been invited"));
             }
