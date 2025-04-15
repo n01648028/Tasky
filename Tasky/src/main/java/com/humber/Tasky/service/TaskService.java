@@ -1,9 +1,11 @@
 package com.humber.Tasky.service;
 
 import com.humber.Tasky.model.Task;
+import com.humber.Tasky.model.Team;
 import com.humber.Tasky.model.User;
 import com.humber.Tasky.model.Task.Priority;
 import com.humber.Tasky.repository.TaskRepository;
+import com.humber.Tasky.repository.TeamRepository;
 import com.humber.Tasky.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,9 @@ public class TaskService {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TeamRepository teamRepository;
 
     public Task getTaskById(String id) {
         return taskRepository.findById(id)
@@ -158,6 +163,20 @@ public class TaskService {
         }
     }
     
+    public void inviteTeamToTask(String taskId, String teamId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        team.getMemberIds().forEach(memberId -> {
+            if (!task.getInvitedUsers().contains(memberId)) {
+                task.getInvitedUsers().add(memberId);
+            }
+        });
+        taskRepository.save(task);
+    }
+
     public void acceptTaskInvitation(String taskId, String userId) {
         if (userId == null) {
             throw new RuntimeException("User ID is required to accept a task invitation");

@@ -1,11 +1,9 @@
 package com.humber.Tasky.controller;
 
-import com.humber.Tasky.model.FriendRequest;
-import com.humber.Tasky.model.FriendRequestWithUser;
-import com.humber.Tasky.model.Task;
-import com.humber.Tasky.model.User;
+import com.humber.Tasky.model.*;
 import com.humber.Tasky.service.AuthService;
 import com.humber.Tasky.service.TaskService;
+import com.humber.Tasky.service.TeamService;
 import com.humber.Tasky.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +31,14 @@ public class WebController {
     private final AuthService authService;
     private final TaskService taskService;
     private final UserService userService;
+    private final TeamService teamService;
 
     @Autowired
-    public WebController(AuthService authService, TaskService taskService, UserService userService) {
+    public WebController(AuthService authService, TaskService taskService, UserService userService, TeamService teamService) {
         this.taskService = taskService;
         this.authService = authService;
         this.userService = userService;
+        this.teamService = teamService;
     }
 
     @GetMapping("/")
@@ -238,6 +238,43 @@ public String profile(Principal principal, Model model) {
     @GetMapping("/online-users")
     public String showOnlineUsersPage() {
         return "online-users";
+    }
+
+    @GetMapping("/teams")
+    public String showTeamsPage() {
+        return "teams";
+    }
+
+    @GetMapping("/create-team")
+    public String showCreateTeamPage() {
+        return "create-team";
+    }
+
+    @GetMapping("/teams/{id}")
+    public String viewTeam(@PathVariable String id, Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login?error=not_authenticated";
+        }
+
+        try {
+            Optional<Team> team = teamService.getTeamById(id);
+            if (team.isEmpty()) {
+                model.addAttribute("error", "Team not found");
+                return "error";
+            }
+
+            User currentUser = userService.getUserByEmail(principal.getName());
+            boolean isOwner = "Owner".equals(team.get().getMemberPermissions().get(currentUser.getId()));
+
+            model.addAttribute("team", team.get()); // Pass the team object to the template
+            model.addAttribute("teamId", id); // Explicitly pass the teamId
+            model.addAttribute("isOwner", isOwner);
+            model.addAttribute("currentUserId", currentUser.getId());
+            return "team";
+        } catch (Exception e) {
+            model.addAttribute("error", "An error occurred while loading the team");
+            return "error";
+        }
     }
 
     @PostMapping("/chat/send")

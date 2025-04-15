@@ -175,4 +175,14 @@ public class TaskController {
         User user = userService.getUserByEmail(email);
         return taskService.getTaskInvitations(user.getId());
     }
+
+    @PostMapping("/{taskId}/invite-team")
+    public ResponseEntity<?> inviteTeamToTask(@PathVariable String taskId, @RequestParam String teamId) {
+        try {
+            taskService.inviteTeamToTask(taskId, teamId);
+            return ResponseEntity.ok(Map.of("message", "Team invited successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }
