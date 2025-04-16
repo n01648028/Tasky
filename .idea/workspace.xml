@@ -33,12 +33,13 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/msys64/home/BBNex/Tasky",
+    "last_opened_file_path": "C:/msys64/home/BBNex/Tasky/Tasky",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -69,7 +70,7 @@
       <updated>1744564410965</updated>
       <workItem from="1744564412138" duration="3886000" />
       <workItem from="1744660068733" duration="482000" />
-      <workItem from="1744660587105" duration="1986000" />
+      <workItem from="1744660587105" duration="4260000" />
     </task>
     <servers />
   </component>
